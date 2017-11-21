@@ -1,0 +1,51 @@
+﻿<Window x:Class="DeStream.Wallet.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DeStream.Wallet"
+        mc:Ignorable="d"
+        Title="Wallet authorization" Height="190" Width="295" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
+        DataContext="{Binding Source={StaticResource VMLocator}, Path=LoginVM}">
+    <Window.InputBindings>
+        <KeyBinding Key="Return" Command="{Binding EnterCommand}"/>
+    </Window.InputBindings>
+    <Grid>
+        <Border Style="{StaticResource RoundedBorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock TextAlignment="Center"></TextBlock>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Margin="5">Username:</TextBlock>
+                    <TextBox Grid.Column="1" Margin="5" x:Name="UsernameTextBox" Text="{Binding Username, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}" TabIndex="0"/>
+
+                    <TextBlock Grid.Row="1" Margin="5">Password:</TextBlock>
+                    <PasswordBox Grid.Row="1" Grid.Column="1" Margin="5" x:Name="PasswordTextBox" PasswordChanged="PasswordTextBox_PasswordChanged"/>
+
+                    <Button Grid.Row="2" Grid.Column="1" Margin="5" Command="{Binding EnterCommand}" Content="Log in"/>
+                </Grid>
+
+                <TextBlock TextWrapping="Wrap" Margin="0,10,0,0" Grid.Row="3" TextAlignment="Center" HorizontalAlignment="Center" 
+                           Foreground="Red" Text="{Binding LoginError}"/>
+
+            </Grid>
+
+        </Border>
+    </Grid>
+</Window>

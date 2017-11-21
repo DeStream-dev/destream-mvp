@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    <link href="~/Content/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap/bootstrap-extend.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap/bootstrap-reboot.min.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/ionicons.min.css" rel="stylesheet" />
+    <link href="~/Content/css/master_style.css" rel="stylesheet" />
+    <link href="~/Content/css/_all-skins.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.toast.min.css" rel="stylesheet" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- google font -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/custom/Account/UserInfo/userInfoController.js"></script>
+    <script src="~/Scripts/custom/Account/UserInfo/Models/accountModels.js"></script>
+    <script src="~/Scripts/custom/Account/UserInfo/Services/accountService.js"></script>
+    <script src="~/Scripts/custom/Account/Targets/Services/targetsService.js"></script>
+    <script src="~/Scripts/custom/Account/Targets/Models/targetsModels.js"></script>
+    <script src="~/Scripts/custom/Account/Targets/targetsController.js"></script>
+    <script src="~/Scripts/custom/Common/Services/commonServices.js"></script>
+    <script src="~/Scripts/custom/app.js"></script>
+    <style>
+        .overlay {
+            background: none !important;
+        }
+
+        .btn-info.disabled, .btn-info:disabled {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+        @Html.Partial("~/Views/Partials/_Header.cshtml")
+        @Html.Partial("~/Views/Partials/_LeftMenu.cshtml")
+
+        <div class="content-wrapper" ng-app="App">
+            @RenderBody()
+        </div>
+
+        @Html.Partial("~/Views/Partials/_Footer.cshtml")
+        @Html.Partial("~/Views/Partials/_RightMenu.cshtml")
+
+
+        <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+        <div class="control-sidebar-bg"></div>
+
+    </div>
+
+    <div class="modal modal-danger fade" id="errorModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Error</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorModalMessageContainer"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline float-right" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+    <div class="modal modal-warning fade" id="confirmModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="confirmModalHeader"></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmModalMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-outline float-right" data-dismiss="modal" id="confirmModalOkButton">ОК</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
+
+    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+    <script src="~/Scripts/popper.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.slimscroll.min.js"></script>
+    <script src="~/Scripts/jquery.toast.min.js"></script>
+
+
+    <script src="~/Scripts/demo.js"></script>
+    <script src="~/Scripts/template.js"></script>
+    @RenderSection("scripts",false)
+</body>
+</html>

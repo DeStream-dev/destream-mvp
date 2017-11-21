@@ -1,0 +1,48 @@
+﻿@{ 
+    var isUserInfoPage = !Request.Path.Contains("Targets");
+} 
+
+<!-- Left side column. contains the logo and sidebar -->
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="image float-left">
+                <img src="~/Content/images/user2-160x160.jpg" class="rounded-circle" alt="User Image">
+            </div>
+            <div class="info float-left">
+                <p>Minimal Template</p>
+                <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
+            </div>
+        </div>
+
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu" data-widget="tree">
+
+            <li class="@if (isUserInfoPage) {<text>active</text>}">
+<a href="~/">
+
+<i class="fa fa-user"></i> <span>Personal info</span>
+                </a>
+            </li>
+            <li class="@if (!isUserInfoPage) {<text>active</text>}">
+                <a href="/Account/Targets">
+
+<i class="fa fa-th-list"></i> <span>Targets</span>
+                </a>
+            </li>
+            
+
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+    <div class="sidebar-footer">
+        <!-- item-->
+        <a href="~/Account" class="link" data-toggle="tooltip" title="" data-original-title="Settings"><i class="fa fa-cog fa-spin"></i></a>
+        <!-- item-->
+        @*<a href="" class="link" data-toggle="tooltip" title="" data-original-title="Email"><i class="fa fa-envelope"></i></a>*@
+        <!-- item-->
+        <a href="~/Account/Logout" class="link" data-toggle="tooltip" title="" data-original-title="Logout"><i class="fa fa-power-off"></i></a>
+    </div>
+</aside>

@@ -1,0 +1,102 @@
+﻿
+
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <h1>
+        Personal info
+    </h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active"><i class="fa fa-user"></i> Personal info</li>
+    </ol>
+</section>
+
+<section class="content box" ng-controller="UserInfoController">
+    <div class="overlay" ng-show="loading">
+        <i class="fa fa-refresh fa-spin"></i>
+    </div>
+    <div class="row">
+        <div class="col-xl-4 col-lg-5">
+            <!-- Profile Image -->
+            <div class="box box-primary">
+                <div class="box-body box-profile">
+                    <img class="profile-user-img rounded-circle img-fluid mx-auto d-block" src="~/Content/images/5.jpg" alt="Изображение пользователя">
+
+                    <h3 class="profile-username text-center">{{userInfo.UserProfile.DisplayName}}</h3>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="profile-user-info">
+                                <p>Username</p>
+                                <h6 class="margin-bottom">{{userInfo.UserName}}</h6>
+                                <p>Email </p>
+                                <h6 class="margin-bottom">{{userInfo.Email}}</h6>
+                                <p>Phone number</p>
+                                <h6 class="margin-bottom">+11 123 456 7890</h6>
+                                <p>Info</p>
+                                <h6 class="margin-bottom">{{userInfo.UserProfile.UserInfo}}</h6>
+                                <p class="margin-bottom">Social networks</p>
+                                <div class="user-social-acount">
+                                    <button class="btn btn-circle btn-social-icon btn-facebook"><i class="fa fa-facebook"></i></button>
+                                    <button class="btn btn-circle btn-social-icon btn-twitter"><i class="fa fa-twitter"></i></button>
+                                    <button class="btn btn-circle btn-social-icon btn-instagram"><i class="fa fa-instagram"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="box box-info">
+                <!-- form start -->
+                <form class="form-horizontal form-element">
+                    <div class="box-body">
+                        <div class="form-group row">
+                            <label for="inputDisplayName" class="col-sm-2 control-label">Name</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputDisplayName" maxlength="64" ng-model="editedUserProfile.DisplayName"
+                                       placeholder="Name">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputPurseNumber" class="col-sm-2 control-label">Wallet</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="inputPurseNumber" maxlength="16" ng-model="editedUserProfile.PurseNumber"
+                                       placeholder="Wallet">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="inputAbout" class="col-sm-2 control-label">Info</label>
+
+                            <div class="col-sm-10">
+                                <textarea class="form-control" maxlength="4000" ng-model="editedUserProfile.UserInfo" placeholder="Info"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-default" ng-click="vm.cancelChanges()">Cancel</button>
+                        <button type="submit" class="btn btn-info pull-right" ng-click="vm.saveChanges()"
+                                ng-disabled="!editedUserProfile.DisplayName && !editedUserProfile.PurseNumber && !editedUserProfile.UserInfo">
+                            Save
+                        </button>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+</section>
+<!-- /.content -->
+@section scripts{
+    
+}
+

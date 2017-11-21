@@ -1,0 +1,13 @@
+﻿{
+  "SiteUrl": "http://test.qb-systems.ru:4464",
+  "Users": [
+    {
+      "Username": "test",
+      "Password": "123123123"
+    },
+    {
+      "Username": "test2",
+      "Password": "123123123"
+    }
+  ]
+}
