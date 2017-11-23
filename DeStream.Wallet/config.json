@@ -1,5 +1,5 @@
 ﻿{
-  "SiteUrl": "http://test.qb-systems.ru:4464",
+  "SiteUrl": "http://localhost:4464",
   "Users": [
     {
       "Username": "test",

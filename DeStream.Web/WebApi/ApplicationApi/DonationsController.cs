@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using DeStream.Web.Services;
+using DeStream.Web.WebApi.SignalR;
 using DeStream.WebApi.Models.Request;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using System.Web.Http;
 namespace DeStream.Web.WebApi.ApplicationApi
 {
     [RoutePrefix("api/demo/app/donations")]
-    public class DonationsController : BaseApiController
+    public class DonationsController : HubApiControllerBase<DonationHub>
     {
         [Route("")]
         public IHttpActionResult Post(AddDonationRequest donation)
@@ -21,7 +22,11 @@ namespace DeStream.Web.WebApi.ApplicationApi
                 var service = scope.Resolve<IUserTargetDonationsService>();
                 var result = service.AddDonation(donation.UserName, donation.FromUserName, donation.DonationValue, donation.TargetCode);
                 if (result.Status == Common.Enums.OperationResultType.Success)
+                {
+                    if (result.SignalRResult != null)
+                        Helpers.WidgetSignalNotificator.DonationAdded(result.SignalRResult, Hub);
                     return Ok();
+                }
                 else
                     return Content(HttpStatusCode.BadRequest, new { ErrorMessage = string.Join("; ", result.Errors) });
             }

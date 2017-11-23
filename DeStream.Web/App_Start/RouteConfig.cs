@@ -12,6 +12,7 @@ namespace DeStream.Web
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.MapRoute("WithoutActionInUrl", "Widget/{id}",new {controller="Widget",action="Index" });
 
             routes.MapRoute(
                 name: "Default",

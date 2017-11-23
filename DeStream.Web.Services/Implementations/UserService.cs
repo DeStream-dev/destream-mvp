@@ -83,11 +83,12 @@ namespace DeStream.Web.Services.Implementations
 
         public UserInfo GetUserInfo(string userId)
         {
-            UserInfo info = new UserInfo();
+            UserInfo info = null;
             
             var user = _applicationUserDataService.Value.Query(x => x.UserProfile).FirstOrDefault(x => x.Id == userId);
             if(user!=null)
             {
+                info = new UserInfo();
                 info.Email = user.Email;
                 info.UserName = user.UserName;
                 if (user.UserProfile != null)

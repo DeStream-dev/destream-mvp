@@ -6,8 +6,9 @@
 
     export class UserTargetDonation {
         TargetName: string;
+        Code: string;
         DestinationTargetTotal: number;
         ActualTotal: number;
-        LastDonateFrom: string;
+        LastDonateTotal: number;
     }
 }

@@ -59,5 +59,15 @@ namespace DeStream.Wallet.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon wallet_trayIcon {
+            get {
+                object obj = ResourceManager.GetObject("wallet_trayIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
     }
 }

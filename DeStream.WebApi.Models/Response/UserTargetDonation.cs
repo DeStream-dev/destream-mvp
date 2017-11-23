@@ -9,8 +9,9 @@ namespace DeStream.WebApi.Models.Response
     public class UserTargetDonation
     {
         public string TargetName { get; set; }
+        public string Code { get; set; }
         public decimal DestinationTargetTotal { get; set; }
         public decimal ActualTotal { get; set; }
-        public string LastDonateFrom { get; set; }
+        public decimal LastDonateTotal { get; set; }
     }
 }

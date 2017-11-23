@@ -67,6 +67,23 @@ var App;
                 return ErrorsService;
             }());
             Services.ErrorsService = ErrorsService;
+            var CollectionService = (function () {
+                function CollectionService() {
+                }
+                CollectionService.prototype.toRows = function (items, rowItemsCount) {
+                    var groups = [], inner;
+                    for (var i = 0; i < items.length; i++) {
+                        if (i % rowItemsCount === 0) {
+                            inner = [];
+                            groups.push(inner);
+                        }
+                        inner.push(items[i]);
+                    }
+                    return groups;
+                };
+                return CollectionService;
+            }());
+            Services.CollectionService = CollectionService;
         })(Services = Common.Services || (Common.Services = {}));
     })(Common = App.Common || (App.Common = {}));
 })(App || (App = {}));

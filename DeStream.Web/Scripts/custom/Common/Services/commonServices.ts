@@ -60,4 +60,18 @@ module App.Common.Services {
             return msg;
         }
     }
+
+    export class CollectionService {
+        toRows<T>(items:T[], rowItemsCount: number):T[][] {
+            var groups = [],inner;
+            for (var i = 0; i < items.length; i++) {
+                if (i % rowItemsCount === 0) {
+                    inner = [];
+                    groups.push(inner);
+                }
+                inner.push(items[i]);
+            }
+            return groups;
+        }
+    }
 }

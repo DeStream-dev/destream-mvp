@@ -23,7 +23,7 @@ namespace DeStream.Web.App_Start
                 LoginPath = new PathString("/Account/Login"),
                 CookieName="dsauth"
             });
-
+            app.MapSignalR();
         }
 
     }

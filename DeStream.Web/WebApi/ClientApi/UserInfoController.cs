@@ -23,6 +23,7 @@ namespace DeStream.Web.WebApi.ClientApi
             {
                 var service = scope.Resolve<IUserService>();
                 var info= service.GetUserInfo(User.Identity.GetUserId());
+                if (info == null) info = new UserInfo();
                 return Ok(info);
             }
         }

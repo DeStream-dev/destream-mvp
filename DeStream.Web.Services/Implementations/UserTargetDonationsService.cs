@@ -39,14 +39,20 @@ namespace DeStream.Web.Services.Implementations
                   && x.Code == targetCode);
                 if(target!=null)
                 {
-                    _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
-                    {
-                        DonationFrom=fromUserName,
-                        DonationTotal=total,
-                        UserTargetId=target.Id
-                    });
-                    _unitOfWork.Value.SaveChanges();
-                    result.Status = Common.Enums.OperationResultType.Success;
+                        _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
+                        {
+                            DonationFrom = fromUserName,
+                            DonationTotal = total,
+                            UserTargetId = target.Id
+                        });
+                        _unitOfWork.Value.SaveChanges();
+                        result.Status = Common.Enums.OperationResultType.Success;
+                        result.SignalRResult = new SignalRAddDonationNotificationResult
+                        {
+                            Donation = total,
+                            Code = target.Code,
+                            UserId = target.ApplicationUserId
+                        };
                 }
             }
             if (result.Status == Common.Enums.OperationResultType.Failed)
@@ -64,7 +70,8 @@ namespace DeStream.Web.Services.Implementations
                 var resTarget = new UserTargetDonation
                 {
                     DestinationTargetTotal = item.TargetRequiredTotal,
-                    TargetName = item.Name
+                    TargetName = item.Name,
+                    Code=item.Code
                 };
                 var lastDonate = _userTargetDonationDataService.Value.Query().Where(x => x.UserTargetId == item.Id)
                     .OrderByDescending(x => x.Id).FirstOrDefault();
@@ -73,7 +80,7 @@ namespace DeStream.Web.Services.Implementations
                     var total = _userTargetDonationDataService.Value.Query().Where(x => x.UserTargetId == item.Id)
                        .Sum(x => x.DonationTotal);
                     resTarget.ActualTotal = total;
-                    resTarget.LastDonateFrom = lastDonate.DonationFrom;
+                    resTarget.LastDonateTotal = lastDonate.DonationTotal;
                 }
                 result.Items.Add(resTarget);
             }

@@ -9,7 +9,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - My ASP.NET Application</title>
+    <title>_</title>
 
     <link href="~/Content/css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="~/Content/css/bootstrap/bootstrap-extend.css" rel="stylesheet" />
@@ -18,7 +18,6 @@
     <link href="~/Content/css/ionicons.min.css" rel="stylesheet" />
     <link href="~/Content/css/master_style.css" rel="stylesheet" />
     <link href="~/Content/css/_all-skins.css" rel="stylesheet" />
-    <link href="~/Content/css/jquery.toast.min.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -36,65 +35,108 @@
     <script src="~/Scripts/custom/Widget/widgetModels.js"></script>
     <script src="~/Scripts/custom/widgetApp.js"></script>
     <style>
-        .overlay {
-            background: none !important;
+        .notificated {
+            background: #4caf50;
+            -webkit-transition: background 1s;
+            -moz-transition: background 1s;
+            -o-transition: background 1s;
+            transition: background 1s;
         }
 
-        .btn-info.disabled, .btn-info:disabled {
-            pointer-events: none;
+        .bg-blue {
+            -webkit-transition: background 4s;
+            -moz-transition: background 4s;
+            -o-transition: background 4s;
+            transition: background 4s;
+        }
+
+        .donate {
+            position: absolute;
+            top: 49px;
+            right: 10px;
+            z-index: 0;
+            font-size: 30px;
+            color: white;
+            display: none;
+        }
+
+        .wrapper {
+            background-color: transparent !important;
+        }
+
+        .content-wrapper {
+            margin-left: 0px !important;
+            background-color: transparent !important;
+        }
+
+        .content {
+            padding: 10px !important;
+            background: transparent !important;
+        }
+
+        .bg-blue-transparent {
+            background-color: #45aef18c;
+        }
+
+        .inner {
+            color: black;
+        }
+
+        .hidden-target{
+            display:none;
         }
     </style>
 </head>
-<body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;">
-    <div class="wrapper">
+@if (Model != null)
+{
+    <body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;">
+        <div class="wrapper">
+            <audio id="notificationSound" src="~/Content/sounds/coins.mp3"></audio>
+            <div class="content-wrapper" style="min-height: 922px;" ng-app="WidgetApp">
+                @*<section class="content-header text-center">
+                        <h1>
+                            @Model.UserProfile.DisplayName
+                        </h1>
+                    </section>*@
 
-        <div class="content-wrapper" style="min-height: 922px;" ng-app="WidgetApp">
-            <section class="content-header">
-                <h1>
-                    @Model.UserProfile.DisplayName
-                </h1>
-            </section>
-            <section class="content" ng-controller="WidgetController">
-                <!-- Default box -->
-                <div class="row">
-                    <div class="col-xl-3 col-md-6 col-6" ng-repeat="item in targetDonationInfos.Items">
-                        <!-- small box -->
-                        <div class="small-box bg-blue">
-                            <div class="inner">
-                                <h3>{{item.TargetName}}</h3>
-
-                                <p>{{item.ActualTotal}}/{{item.DestinationTargetTotal}}</p>
-                            </div>
-                            <div class="icon">
-                                <i class="fa fa-shopping-bag"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-right"></i></a>
-                        </div>
-                    </div>
-                  
+                <div class="text-center" style="color:black">
+                    <h1>
+                        @Model.UserProfile.DisplayName
+                    </h1>
                 </div>
-            </section>
+                <section class="content" ng-controller="WidgetController">
+                    <!-- Default box -->
+                    <div class="row">
+                        <div class="col-xl-12 col-md-12 col-12" ng-repeat="item in targetDonationInfos">
+                            <!-- small box -->
+                            <div class="small-box bg-blue targetItem hidden-target">
+                                <div class="inner">
+                                    <h3>{{item.TargetName}}</h3>
+                                    <p># {{item.Code}}</p>
+                                    <p>{{item.ActualTotal}}/{{item.DestinationTargetTotal}}</p>
+                                </div>
+                                <div class="donate">+{{item.LastDonateTotal}}</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+
+
+
+            <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
+            <div class="control-sidebar-bg"></div>
+
         </div>
 
 
+        <script src="~/Scripts/jquery-3.2.1.min.js"></script>
+        <script src="~/Scripts/popper.min.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>
+        <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+        <script src="~/signalr/hubs"></script>
 
-        <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
-        <div class="control-sidebar-bg"></div>
-
-    </div>
-
-
-    <script src="~/Scripts/jquery-3.2.1.min.js"></script>
-    <script src="~/Scripts/popper.min.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
-    <script src="~/Scripts/jquery.slimscroll.min.js"></script>
-    <script src="~/Scripts/jquery.toast.min.js"></script>
-
-
-    <script src="~/Scripts/demo.js"></script>
-    <script src="~/Scripts/template.js"></script>
-</body>
+    </body>
+}
 </html>
