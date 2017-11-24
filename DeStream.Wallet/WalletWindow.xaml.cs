@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeStream.Wallet.Helpers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,14 +23,15 @@ namespace DeStream.Wallet
     /// </summary>
     public partial class WalletWindow : Window
     {
+        private const decimal MinDonateValue = 0;
+
+        private readonly NotifyIcon _notifyIcon;
+        private decimal PreviousDonateValue = 0;
         public WalletWindow()
         {
             InitializeComponent();
             UsernameTextBox.Focus();
-            _notifyIcon = new NotifyIcon();
-            
-            _notifyIcon.Icon = Properties.Resources.wallet_trayIcon;
-            _notifyIcon.Text = "DeStream Wallet";
+            _notifyIcon = UIHelper.CreateNotifyIconForTray();
             _notifyIcon.DoubleClick += _notifyIcon_DoubleClick;
         }
 
@@ -44,9 +46,7 @@ namespace DeStream.Wallet
             System.Windows.Application.Current.MainWindow.Show();
         }
 
-        const decimal MinValue = 0;
-
-        private decimal PreviousValue = 0;
+       
 
         private void DonationTotalTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -55,27 +55,26 @@ namespace DeStream.Wallet
             {
                 if (decimal.TryParse(DonationTotalTextBox.Text, out inputVal))
                 {
-                    if (inputVal >= MinValue && inputVal != PreviousValue)
+                    if (inputVal >= MinDonateValue && inputVal != PreviousDonateValue)
                     {
-                        PreviousValue = inputVal;
+                        PreviousDonateValue = inputVal;
                     }
                     else
-                        DonationTotalTextBox.Text = PreviousValue.ToString();
+                        DonationTotalTextBox.Text = PreviousDonateValue.ToString();
                 }
                 else
                 {
-                    DonationTotalTextBox.Text = PreviousValue.ToString();
+                    DonationTotalTextBox.Text = PreviousDonateValue.ToString();
                 }
             }
             else
             {
-                PreviousValue = MinValue;
-                DonationTotalTextBox.Text = PreviousValue.ToString();
+                PreviousDonateValue = MinDonateValue;
+                DonationTotalTextBox.Text = PreviousDonateValue.ToString();
             }
 
         }
 
-        private readonly NotifyIcon _notifyIcon;
 
         private void Window_StateChanged(object sender, EventArgs e)
         {

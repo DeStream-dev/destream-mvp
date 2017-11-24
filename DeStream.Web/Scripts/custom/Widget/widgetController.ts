@@ -7,7 +7,7 @@
         private _id: string;
         private _hub: HubProxy;
         private _indexForNotification: number;
-        private readonly TargetDonationsPerScreenCount: number = 2;
+        private readonly TargetDonationsPerScreenCount: number = 3;
         private _newDonateArrivedToTargetCode: string;
 
         constructor(private $scope: WidgetControllerScope, private widgetService: WidgetService,

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeStream.Wallet"
         mc:Ignorable="d"
-        Title="DeStream Wallet - Log In" Height="190" Width="315" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
+        Title="DeStream Wallet - Log In" Height="190" Width="315" WindowStartupLocation="CenterScreen" StateChanged="Window_StateChanged" ResizeMode="CanMinimize"
         DataContext="{Binding Source={StaticResource VMLocator}, Path=LoginVM}" Icon="Images/wallet_trayIcon.ico">
     <Window.InputBindings>
         <KeyBinding Key="Return" Command="{Binding EnterCommand}"/>

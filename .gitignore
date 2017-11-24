@@ -209,6 +209,11 @@ FakesAssemblies/
 
 # ===================================
 
+*.db
+
 # Project
 packages
-DeStream.Web\Scripts\i18n
+/DeStream.Web/Scripts\i18n
+/DeStream.Wallet/config.Release.config
+/DeStream.Wallet/config.Release.json
+/DeStream.Web/App_Data

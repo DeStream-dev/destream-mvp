@@ -7,7 +7,7 @@ var WidgetApp;
             this.widgetService = widgetService;
             this.$timeout = $timeout;
             this.collectionService = collectionService;
-            this.TargetDonationsPerScreenCount = 2;
+            this.TargetDonationsPerScreenCount = 3;
             this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
             this._hub = $.connection.hub.createHubProxy("donationhub");
             $.connection.hub.start(function (res) {

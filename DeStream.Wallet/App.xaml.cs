@@ -22,6 +22,7 @@ namespace DeStream.Wallet
 
         private const string AppName = "DeStreamWallet";
         private const string ConfigFile = "config.json";
+        private string ProjectConfigFileName;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -30,6 +31,11 @@ namespace DeStream.Wallet
             {
                 Application.Current.Shutdown();
             }
+#if (DEBUG)
+            ProjectConfigFileName = "config.Debug.json";
+#else
+            ProjectConfigFileName = "config.Release.json";
+#endif
 
             string configPath = Path.Combine(Environment.CurrentDirectory, ConfigFile);
             if (!File.Exists(configPath))
@@ -65,7 +71,7 @@ namespace DeStream.Wallet
 
         private void WriteDefaultConfig(string destinationPath)
         {
-            using (var configStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{Assembly.GetExecutingAssembly().GetName().Name}.{ConfigFile}"))
+            using (var configStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{Assembly.GetExecutingAssembly().GetName().Name}.{ProjectConfigFileName}"))
             {
                 if (configStream != null)
                 {
