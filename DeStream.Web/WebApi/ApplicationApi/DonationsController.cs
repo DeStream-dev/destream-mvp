@@ -20,11 +20,14 @@ namespace DeStream.Web.WebApi.ApplicationApi
             using (var scope = DependencyConfig.Container.BeginLifetimeScope())
             {
                 var service = scope.Resolve<IUserTargetDonationsService>();
-                var result = service.AddDonation(donation.UserName, donation.FromUserName, donation.DonationValue, donation.TargetCode);
+                var result = service.AddDonation(donation.UserName, donation.FromUser, donation.DonationValue, donation.TargetCode);
                 if (result.Status == Common.Enums.OperationResultType.Success)
                 {
                     if (result.SignalRResult != null)
+                    {
                         Helpers.WidgetSignalNotificator.DonationAdded(result.SignalRResult, Hub);
+                        Helpers.WalletSignalNotificator.WalletBalanceChanged(result.SignalRResult.UserId, result.WalletSignalRResult, Hub);
+                    }
                     return Ok();
                 }
                 else

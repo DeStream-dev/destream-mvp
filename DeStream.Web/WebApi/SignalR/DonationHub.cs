@@ -11,6 +11,8 @@ namespace DeStream.Web.WebApi.SignalR
     {
         public void Subscribe(string userId)
         {
+            NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+            log.Info(userId);
             Guid uid = Guid.Empty;
             if (Guid.TryParse(userId, out uid))
             {

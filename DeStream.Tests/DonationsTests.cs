@@ -13,7 +13,7 @@ namespace DeStream.Tests
     [TestClass]
     public class DonationsTests
     {
-        private const string UserId="ae518296-bfae-4eb1-ace4-49576fc4a77e";
+        private const string UserId= "1d6a4e4a-d83e-44c6-a16c-01ed3bc9b286";
         public DonationsTests()
         {
             DependencyConfig.Configure();

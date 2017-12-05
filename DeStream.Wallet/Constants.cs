@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeStream.Wallet.VM
+namespace DeStream.Wallet
 {
-    internal class ErrorResponse
+    internal class Constants
     {
-        public string ErrorMessage { get; set; }
+        public const string WalletWebApi = "api/demo/app/wallet";
     }
-
 }

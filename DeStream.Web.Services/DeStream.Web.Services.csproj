@@ -97,12 +97,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementations\ApplicationServices\WalletService.cs" />
     <Compile Include="Implementations\UserTargetDonationsService.cs" />
     <Compile Include="IUserTargetDonationsService.cs" />
     <Compile Include="Implementations\UserService.cs" />
     <Compile Include="Implementations\UserTargetService.cs" />
     <Compile Include="IUserService.cs" />
     <Compile Include="IUserTargetService.cs" />
+    <Compile Include="IWalletService.cs" />
     <Compile Include="ModelsConfig.cs" />
     <Compile Include="Models\Result\AddDonationResult.cs" />
     <Compile Include="Models\Result\SaveUserTargetsResult.cs" />

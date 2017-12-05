@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DeStream.Wallet.VM
+namespace DeStream.Wallet.Models
 {
-    internal class ErrorResponse
+    internal class BalanceChangedMessage
     {
-        public string ErrorMessage { get; set; }
+        public decimal Total { get; set; }
     }
-
 }

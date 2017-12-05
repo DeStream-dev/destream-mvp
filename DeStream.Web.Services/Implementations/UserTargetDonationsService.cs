@@ -27,35 +27,57 @@ namespace DeStream.Web.Services.Implementations
             _userTargetDonationDataService = userTargetDonationDataService;
         }
 
-        public AddDonationResult AddDonation(string toUserName, string fromUserName, decimal total, string targetCode)
+        public AddDonationResult AddDonation(string toUserName, string fromUserId, decimal total, string targetCode)
         {
             const string CommonErrorMessage = "Please, check username or target code.";
             var result = new AddDonationResult();
             result.Status = Common.Enums.OperationResultType.Failed;
             var userId = _applicationUserDataService.Value.Query().Where(x => x.UserName.ToLower() == toUserName.ToLower()).Select(x => x.Id).FirstOrDefault();
-            if(userId!=null)
+
+            if (userId != null)
             {
-                var target = _userTargetDataService.Value.Query().FirstOrDefault(x => x.ApplicationUserId == userId
-                  && x.Code == targetCode);
-                if(target!=null)
+                if (/*userId != fromUserId*/true)
                 {
-                        _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
+                    var fromUserExists = _applicationUserDataService.Value.Query().Any(x => x.Id == fromUserId);
+                    if (fromUserExists)
+                    {
+                        var target = _userTargetDataService.Value.Query().FirstOrDefault(x => x.ApplicationUserId == userId
+                          && x.Code == targetCode);
+                        if (target != null)
                         {
-                            DonationFrom = fromUserName,
-                            DonationTotal = total,
-                            UserTargetId = target.Id
-                        });
-                        _unitOfWork.Value.SaveChanges();
-                        result.Status = Common.Enums.OperationResultType.Success;
-                        result.SignalRResult = new SignalRAddDonationNotificationResult
-                        {
-                            Donation = total,
-                            Code = target.Code,
-                            UserId = target.ApplicationUserId
-                        };
+                            var currentUserTotal = _userTargetDonationDataService.Value.Query().Where(x => x.UserTarget.ApplicationUserId == userId).Sum(x => (decimal?)x.DonationTotal) ?? 0;
+                            _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
+                            {
+                                DonationFromUserId = fromUserId,
+                                DonationTotal = total,
+                                UserTargetId = target.Id
+                            });
+                            _unitOfWork.Value.SaveChanges();
+                            result.Status = Common.Enums.OperationResultType.Success;
+                            result.SignalRResult = new WidgetNotificationResult
+                            {
+                                Donation = total,
+                                Code = target.Code,
+                                UserId =fromUserId //target.ApplicationUserId
+                            };
+                            result.WalletSignalRResult = new WalletBalanceChangedResponse
+                            {
+                                LastOperation = new WalletOperation
+                                {
+                                    OperationType = WalletOperationType.Income,
+                                    Total = total
+                                },
+                                Total = currentUserTotal + total
+                            };
+                        }
+                    }
+                }
+                else
+                {
+                    result.Errors.Add("You cannot donate to yourself.");
                 }
             }
-            if (result.Status == Common.Enums.OperationResultType.Failed)
+            if (result.Status == Common.Enums.OperationResultType.Failed && !result.Errors.Any())
                 result.Errors.Add(CommonErrorMessage);
             return result;
         }
@@ -63,16 +85,17 @@ namespace DeStream.Web.Services.Implementations
         public ListResponse<UserTargetDonation> GetDonations(string userId)
         {
             var result = new ListResponse<UserTargetDonation>();
-                
+
             var targets = _userTargetDataService.Value.Query().Where(x => x.ApplicationUserId == userId).ToList();
-            foreach(var item in targets)
+            foreach (var item in targets)
             {
                 var resTarget = new UserTargetDonation
                 {
                     DestinationTargetTotal = item.TargetRequiredTotal,
                     TargetName = item.Name,
-                    Code=item.Code
+                    Code = item.Code
                 };
+                var donations = _userTargetDonationDataService.Value.Query().ToList();
                 var lastDonate = _userTargetDonationDataService.Value.Query().Where(x => x.UserTargetId == item.Id)
                     .OrderByDescending(x => x.Id).FirstOrDefault();
                 if (lastDonate != null)

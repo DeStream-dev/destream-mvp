@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommonServiceLocator, Version=2.0.1.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.2.0.1\lib\net45\CommonServiceLocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GalaSoft.MvvmLight, Version=5.3.0.19026, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.dll</HintPath>
       <Private>True</Private>
@@ -47,16 +51,16 @@
       <HintPath>..\packages\MvvmLightLibs.5.3.0.0\lib\net45\GalaSoft.MvvmLight.Platform.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Client, Version=2.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.SignalR.Client.2.2.2\lib\net45\Microsoft.AspNet.SignalR.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="RestSharp, Version=106.0.1.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
-      <HintPath>..\packages\RestSharp.106.0.1\lib\net452\RestSharp.dll</HintPath>
+    <Reference Include="RestSharp, Version=106.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.106.1.0\lib\net452\RestSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -88,11 +92,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppContext.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Controls\PreloaderControl.xaml.cs">
       <DependentUpon>PreloaderControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ResponseHelper.cs" />
     <Compile Include="Helpers\UIHelper.cs" />
     <Compile Include="Models\ConfigModels.cs" />
+    <Compile Include="Models\MessengerModels.cs" />
     <Compile Include="VMLocator.cs" />
     <Compile Include="VM\ApiModels.cs" />
     <Compile Include="VM\LoginVM.cs" />
@@ -152,7 +159,12 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\DeStream.WebApi.Models\DeStream.WebApi.Models.csproj">
+      <Project>{d2b8413a-df0e-42a9-899f-5330bbf5602e}</Project>
+      <Name>DeStream.WebApi.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\wallet_trayIcon.ico" />
   </ItemGroup>

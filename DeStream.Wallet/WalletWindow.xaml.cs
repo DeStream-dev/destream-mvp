@@ -1,4 +1,6 @@
 ﻿using DeStream.Wallet.Helpers;
+using DeStream.Wallet.Models;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,8 +15,10 @@ using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace DeStream.Wallet
 {
@@ -26,13 +30,32 @@ namespace DeStream.Wallet
         private const decimal MinDonateValue = 0;
 
         private readonly NotifyIcon _notifyIcon;
+        private readonly Storyboard _statusBarOperationMessageStoryBoard;
         private decimal PreviousDonateValue = 0;
+
         public WalletWindow()
         {
             InitializeComponent();
             UsernameTextBox.Focus();
             _notifyIcon = UIHelper.CreateNotifyIconForTray();
             _notifyIcon.DoubleClick += _notifyIcon_DoubleClick;
+            _statusBarOperationMessageStoryBoard = Resources["operationStatusStoryboard"] as Storyboard;
+            Messenger.Default.Register<BalanceChangedMessage>(this, BalanceChanged_Handler);
+        }
+
+        private void BalanceChanged_Handler(BalanceChangedMessage message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                _statusBarOperationMessageStoryBoard.Begin();
+                if (this.WindowState == WindowState.Minimized)
+                {
+                    _notifyIcon.Visible = false;
+                    WindowState = WindowState.Normal;
+                }
+
+                Show();
+            });
         }
 
         private void _notifyIcon_DoubleClick(object sender, EventArgs e)
@@ -46,7 +69,7 @@ namespace DeStream.Wallet
             System.Windows.Application.Current.MainWindow.Show();
         }
 
-       
+
 
         private void DonationTotalTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {

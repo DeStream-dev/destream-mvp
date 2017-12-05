@@ -11,7 +11,7 @@ namespace DeStream.Web.Services
 {
     public interface IUserTargetDonationsService
     {
-        AddDonationResult AddDonation(string toUserName, string fromUserName, decimal total, string targetCode);
+        AddDonationResult AddDonation(string toUserName, string fromUserId, decimal total, string targetCode);
         ListResponse<UserTargetDonation> GetDonations(string userId);
     }
 }

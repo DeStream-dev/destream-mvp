@@ -9,7 +9,7 @@ namespace DeStream.WebApi.Models.Request
     public class AddDonationRequest
     {
         public decimal DonationValue { get; set; }
-        public string FromUserName { get; set; }
+        public string FromUser { get; set; }
         public string TargetCode { get; set; }
         public string UserName { get; set; }
     }

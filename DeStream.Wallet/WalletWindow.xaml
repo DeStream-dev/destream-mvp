@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DeStream.Wallet"
         mc:Ignorable="d"
-        Title="DeStream Wallet - Send" Height="250" Width="310" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" 
+        Title="DeStream Wallet - Send" Height="290" Width="310" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" 
         Closed="Window_Closed" DataContext="{Binding Source={StaticResource VMLocator}, Path=WalletWM}" IsEnabled="{Binding AllowUserInteraction}" Icon="Images/wallet_trayIcon.ico" StateChanged="Window_StateChanged">
+    <Window.Resources>
+        <Storyboard x:Key="operationStatusStoryboard">
+            <DoubleAnimation Storyboard.TargetName="lastOperationTextBox" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:4" AutoReverse="True"/>
+        </Storyboard>
+    </Window.Resources>
     <Grid>
         <Border Style="{StaticResource RoundedBorderStyle}">
 
@@ -16,6 +21,8 @@
                     <RowDefinition/>
                     <RowDefinition Height="auto"></RowDefinition>
                     <RowDefinition Height="auto"></RowDefinition>
+                    <RowDefinition Height="auto"/>
+
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -23,7 +30,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock HorizontalAlignment="Center">Send donate:</TextBlock>
-                
+
                 <Grid Grid.Row="1" Grid.ColumnSpan="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -54,15 +61,18 @@
                 <TextBlock Text="{Binding SuccessMessage}" Grid.Row="2" Margin="0,0,0,10" TextWrapping="Wrap" 
                            TextAlignment="Center" Foreground="Green"/>
 
-                <StatusBar Grid.Row="3" Grid.ColumnSpan="2" Foreground="Gray">
+                <TextBlock Grid.Row="3" TextAlignment="Center" Margin="0,0,0,10" Text="{Binding StatusBarLastOperationMessage}" x:Name="lastOperationTextBox" 
+                           FontWeight="Bold" Foreground="Blue" Opacity="0"/>
+
+
+                <StatusBar Grid.Row="4" Grid.ColumnSpan="2" Foreground="Gray">
                     <StatusBarItem>
                         <TextBlock Text="{Binding Source={StaticResource AppContext},
-                            Path=CurrentUser.Username, StringFormat={}Logged user: {0}}"/>
+                            Path=CurrentUser.Username,StringFormat={}Logged user:{0}}"/>
                     </StatusBarItem>
+
                     <StatusBarItem HorizontalAlignment="Right">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Grid.Column="1" Text="{Binding WalletTotal, StringFormat={}Balance: {0}}"/>
-                        </StackPanel>
+                        <TextBlock Text="{Binding WalletTotal, StringFormat={}Balance: {0}}"/>
                     </StatusBarItem>
                 </StatusBar>
             </Grid>

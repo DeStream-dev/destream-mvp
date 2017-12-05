@@ -1,5 +1,11 @@
-﻿using GalaSoft.MvvmLight;
+﻿using DeStream.Wallet.Helpers;
+using DeStream.Wallet.Models;
+using DeStream.WebApi.Models.Request;
+using DeStream.WebApi.Models.Response;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
+using Microsoft.AspNet.SignalR.Client;
+using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
@@ -106,18 +112,68 @@ namespace DeStream.Wallet.VM
             }
         }
 
+        private string _statusBarLastOperationMessage;
+        public string StatusBarLastOperationMessage
+        {
+            get
+            {
+                return _statusBarLastOperationMessage;
+            }
+            set
+            {
+                Set(() => StatusBarLastOperationMessage, ref _statusBarLastOperationMessage, value);
+            }
+        }
+
         public RelayCommand SendDonationCommand { get; private set; }
 
         public WalletVM()
         {
             if (IsInDesignMode)
+            {
                 ErrorMessage = "Error error test";
-            AllowUserInteraction = true;
-            decimal baseDec = 0;
-            while (baseDec == 0)
-                baseDec = new Random().Next(10);
-            WalletTotal = (baseDec * 100000) + new Random().Next(99999);
+                SuccessMessage = "olololo lolol";
+                StatusBarLastOperationMessage = "+1000000";
+            }
+            AllowUserInteraction = false;
             SendDonationCommand = new RelayCommand(SendDonationCommand_Handler, CanSendDonationCommand_Handler);
+            LoadWallet();
+            Connect();
+        }
+
+        private void LoadWallet()
+        {
+            AllowUserInteraction = false;
+            var req = new RestRequest(Constants.WalletWebApi+$"/{AppContext.CurrentUser.Uid}", Method.GET);
+            var client = new RestClient(AppContext.Config.SiteUrl);
+            Task.Factory.StartNew(async() =>
+            {
+                await Task.Delay(1000);
+                var response = client.Get<RestResponse>(req);
+                //var response = x.Result;
+                if (response.IsSuccessful)
+                {
+                    var wallet = JsonConvert.DeserializeObject<WalletResponse>(response.Content);
+                    if (wallet != null)
+                    {
+                        WalletTotal = wallet.Total;
+
+                    }
+                    AllowUserInteraction = true;
+                }
+                else
+                {
+                    SuccessMessage = null;
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest && !string.IsNullOrWhiteSpace(response.Content))
+                    {
+                        var err = ResponseHelper.ParseError(response.Content);
+                        ErrorMessage = err?.ErrorMessage;
+                    }
+                    if (ErrorMessage == null)
+                        ErrorMessage = "Error happened.";
+                }
+                //return response;
+            });
         }
 
         private void SendDonationCommand_Handler()
@@ -133,7 +189,7 @@ namespace DeStream.Wallet.VM
                 req.AddObject(new AddDonationRequest
                 {
                     DonationValue = DonationTotal,
-                    FromUserName = AppContext.CurrentUser.Username,
+                    FromUser = AppContext.CurrentUser.Uid,
                     TargetCode = TargetCode,
                     UserName = DestinationUsername
                 });
@@ -165,6 +221,31 @@ namespace DeStream.Wallet.VM
         {
             return !string.IsNullOrWhiteSpace(DestinationUsername) && !string.IsNullOrWhiteSpace(TargetCode)
                 && DonationTotal > 0 && DonationTotal < WalletTotal;
+        }
+
+        private void Connect()
+        {
+            Task.Factory.StartNew(async () =>
+            {
+                var connection = new HubConnection(AppContext.Config.SiteUrl);
+                var hubProxy = connection.CreateHubProxy("donationhub");
+                await connection.Start();
+                await hubProxy.Invoke("subscribe", AppContext.CurrentUser.Uid);
+                hubProxy.On("donationAdded", x =>
+                {
+                    int i = 0;
+
+                });
+
+                hubProxy.On<WalletBalanceChangedResponse>("walletBalanceChanged", res =>
+                {
+                    var sign = res.LastOperation.OperationType == WalletOperationType.Income ? "+" : "-";
+                    StatusBarLastOperationMessage = $"{sign}{res.LastOperation.Total}";
+                    MessengerInstance.Send(new BalanceChangedMessage { Total = res.Total });
+                });
+
+            });
+
         }
 
 

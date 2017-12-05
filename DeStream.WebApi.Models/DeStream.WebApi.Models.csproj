@@ -43,9 +43,13 @@
     <Compile Include="ListResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Request\AddDonationRequest.cs" />
+    <Compile Include="Request\AuthorizeRequest.cs" />
     <Compile Include="Response\AddDonationResponse.cs" />
+    <Compile Include="Response\AuthorizeResponse.cs" />
+    <Compile Include="Response\WalletBalanceChangedResponse.cs" />
     <Compile Include="Response\ErrorBase.cs" />
     <Compile Include="Response\UserTargetDonation.cs" />
+    <Compile Include="Response\WalletResponse.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

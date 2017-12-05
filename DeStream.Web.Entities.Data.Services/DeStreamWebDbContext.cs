@@ -36,6 +36,7 @@ namespace DeStream.Web.Entities.Data.Services
             Database.SetInitializer(new SQLite.CodeFirst.SqliteCreateDatabaseIfNotExists<DeStreamWebDbContext>(modelBuilder, true));
             modelBuilder.Entity<ApplicationUser>().HasOptional(x => x.UserProfile).WithRequired(x => x.ApplicationUser);
             modelBuilder.Entity<ApplicationUser>().HasIndex(x => x.Email).IsUnique(true);
+            //modelBuilder.Entity<UserTargetDonation>().HasRequired(x=>x.)
             modelBuilder.Conventions.Remove<System.Data.Entity.ModelConfiguration.Conventions.PluralizingTableNameConvention>();
             modelBuilder.Properties<decimal>().Configure(x => x.HasPrecision(Constants.DefaultDecimalPrecision, Constants.DefaultDecimalScale));
             modelBuilder.Entity<UserProfile>().HasKey(x => x.ApplicationUserId);

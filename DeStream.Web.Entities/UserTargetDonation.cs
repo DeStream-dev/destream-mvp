@@ -13,8 +13,9 @@ namespace DeStream.Web.Entities
         public decimal DonationTotal { get; set; }
         public DateTime CreatedOn { get; set; }
 
-        [Required,MaxLength(Constants.ShortStringMaxLength)]
-        public string DonationFrom { get; set; }
+        [Required]
+        public string DonationFromUserId { get; set; }
+        public virtual Identity.ApplicationUser DonationFromUser { get; set; }
 
         public long UserTargetId { get; set; }
         public UserTarget UserTarget { get; set; }
