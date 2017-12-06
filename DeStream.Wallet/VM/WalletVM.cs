@@ -241,7 +241,7 @@ namespace DeStream.Wallet.VM
                 {
                     var sign = res.LastOperation.OperationType == WalletOperationType.Income ? "+" : "-";
                     StatusBarLastOperationMessage = $"{sign}{res.LastOperation.Total}";
-                    MessengerInstance.Send(new BalanceChangedMessage { Total = res.Total });
+                    MessengerInstance.Send(new BalanceChangedMessage ());
                 });
 
             });

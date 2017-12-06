@@ -23,10 +23,10 @@ namespace DeStream.Web.WebApi.ApplicationApi
                 var result = service.AddDonation(donation.UserName, donation.FromUser, donation.DonationValue, donation.TargetCode);
                 if (result.Status == Common.Enums.OperationResultType.Success)
                 {
-                    if (result.SignalRResult != null)
+                    if (result.WidgetNotificationResult != null)
                     {
-                        Helpers.WidgetSignalNotificator.DonationAdded(result.SignalRResult, Hub);
-                        Helpers.WalletSignalNotificator.WalletBalanceChanged(result.SignalRResult.UserId, result.WalletSignalRResult, Hub);
+                        Helpers.WidgetSignalNotificator.DonationAdded(result.WidgetNotificationResult, result.TargetUserId, Hub);
+                        Helpers.WalletSignalNotificator.WalletBalanceChanged(result.TargetUserId, result.WalletNotificationResult, Hub);
                     }
                     return Ok();
                 }

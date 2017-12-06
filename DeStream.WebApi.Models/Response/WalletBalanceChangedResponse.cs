@@ -8,7 +8,6 @@ namespace DeStream.WebApi.Models.Response
 {
     public class WalletBalanceChangedResponse
     {
-        public decimal Total { get; set; }
         public WalletOperation LastOperation { get; set; }
     }
 }

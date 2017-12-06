@@ -18,6 +18,7 @@
     <link href="~/Content/css/ionicons.min.css" rel="stylesheet" />
     <link href="~/Content/css/master_style.css" rel="stylesheet" />
     <link href="~/Content/css/_all-skins.css" rel="stylesheet" />
+    <link href="~/Content/css/Site.css" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -28,7 +29,6 @@
     <!-- google font -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
     <script src="~/Scripts/angular.min.js"></script>
-
     <script src="~/Scripts/custom/Common/Services/commonServices.js"></script>
     <script src="~/Scripts/custom/Widget/widgetController.js"></script>
     <script src="~/Scripts/custom/Widget/widgetService.js"></script>
@@ -86,46 +86,96 @@
             display: none;
         }
 
-        .login-box{
-            width:400px;
+        .login-box {
+            width: 400px;
         }
     </style>
 </head>
 @if (Model != null)
 {
-    <body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;">
+    <body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;" data-authorized="@Request.IsAuthenticated">
         <div class="wrapper">
             <audio id="notificationSound" src="~/Content/sounds/coins.mp3"></audio>
-            <div class="content-wrapper" style="min-height: 922px;" ng-app="WidgetApp">
-                @*<section class="content-header text-center">
-                        <h1>
-                            @Model.UserProfile.DisplayName
-                        </h1>
-                    </section>*@
-
+            <div class="content-wrapper" style="min-height: 922px;" ng-app="WidgetApp" ng-controller="WidgetController">
                 <div class="text-center" style="color:black">
                     <h1>
                         @Model.UserProfile.DisplayName
                     </h1>
                 </div>
-                <section class="content" ng-controller="WidgetController">
-                    <!-- Default box -->
+                <section class="content">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-12" ng-repeat="item in targetDonationInfos">
-                            <!-- small box -->
                             <div class="small-box bg-blue targetItem hidden-target">
                                 <div class="inner">
                                     <h3>{{item.TargetName}}</h3>
                                     <p># {{item.Code}}</p>
                                     <p>{{item.ActualTotal}}/{{item.DestinationTargetTotal}}</p>
-                                    <a class="btn bg-purple btn-flat margin" style="font-size:1.4em;width:98%">Donate 100</a>
+                                    <a href="" ng-repeat="donateItem in item.AvailableDonates" class="btn bg-purple btn-flat margin" ng-click="vm.addDonate(donateItem)" style="font-size:1.4em;width:98%">Donate {{donateItem.DonateTotal}}</a>
                                 </div>
                                 <div class="donate">+{{item.LastDonateTotal}}</div>
                             </div>
                         </div>
-
                     </div>
                 </section>
+                <div id="authModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="authModalLabel" style="display: none;">
+                    <div class="modal-dialog login-box">
+                        <div class="modal-content login-box-body box">
+                            <div class="overlay" ng-show="authorizationModel.AuthorizationLoading">
+                                <i class="fa fa-refresh fa-spin"></i>
+                            </div>
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="authModalLabel"></h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="login-box-msg">Sign in to start your session</p>
+                                <form class="form-element" name="authForm" id="authForm">
+                                    <p class="text-red text-center" ng-show="authorizationModel.AuthError">
+                                        {{authorizationModel.AuthError}}
+                                    </p>
+                                    <div class="form-group has-feedback">
+                                        <input type="email" class="form-control" ng-model="authorizationModel.AuthData.Email" autocomplete="off" required placeholder="Email">
+                                        <span class="ion ion-email form-control-feedback"></span>
+                                    </div>
+                                    <div class="form-group has-feedback">
+                                        <input type="password" class="form-control" ng-model="authorizationModel.AuthData.Password" autocomplete="off" required placeholder="Password">
+                                        <span class="ion ion-locked form-control-feedback"></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="basic_checkbox_1">
+                                                <label for="basic_checkbox_1">Remember Me</label>
+                                            </div>
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-6">
+                                            <div class="fog-pwd">
+                                                <a href="javascript:void(0)"><i class="ion ion-locked"></i> Forgot pwd?</a><br>
+                                            </div>
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-12 text-center">
+                                            <a class="btn btn-info btn-block btn-flat margin-top-10 signin-btn" ng-click="vm.authorize()" ng-disabled="authForm.$invalid">SIGN IN</a>
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                </form>
+                                <div class="social-auth-links text-center">
+                                    <p>- OR -</p>
+                                    <a href="#" class="btn btn-social-icon btn-circle btn-facebook"><i class="fa fa-facebook"></i></a>
+                                    <a href="#" class="btn btn-social-icon btn-circle btn-google"><i class="fa fa-google-plus"></i></a>
+                                </div>
+                                <div class="margin-top-30 text-center">
+                                    <p>Don't have an account? <a href="register.html" class="text-info m-l-5">Sign Up</a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+
             </div>
 
 
@@ -133,62 +183,9 @@
             <!-- Add the sidebar's background. This div must be placed immediately after the control sidebar -->
             <div class="control-sidebar-bg"></div>
 
+
         </div>
 
-        <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: block;">
-            <div class="modal-dialog login-box">
-                <div class="modal-content login-box-body">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Log In</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    </div>
-                    <div class="modal-body">
-                        <p class="login-box-msg">Sign in to start your session</p>
-                        <form action="../../index2.html" method="post" class="form-element">
-                            <div class="form-group has-feedback">
-                                <input type="email" class="form-control" placeholder="Email">
-                                <span class="ion ion-email form-control-feedback"></span>
-                            </div>
-                            <div class="form-group has-feedback">
-                                <input type="password" class="form-control" placeholder="Password">
-                                <span class="ion ion-locked form-control-feedback"></span>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="checkbox">
-                                        <input type="checkbox" id="basic_checkbox_1">
-                                        <label for="basic_checkbox_1">Remember Me</label>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                                <div class="col-6">
-                                    <div class="fog-pwd">
-                                        <a href="javascript:void(0)"><i class="ion ion-locked"></i> Forgot pwd?</a><br>
-                                    </div>
-                                </div>
-                                <!-- /.col -->
-                                <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-info btn-block btn-flat margin-top-10">SIGN IN</button>
-                                </div>
-                                <!-- /.col -->
-                            </div>
-                        </form>
-                        <div class="social-auth-links text-center">
-                            <p>- OR -</p>
-                            <a href="#" class="btn btn-social-icon btn-circle btn-facebook"><i class="fa fa-facebook"></i></a>
-                            <a href="#" class="btn btn-social-icon btn-circle btn-google"><i class="fa fa-google-plus"></i></a>
-                        </div>
-                        <div class="margin-top-30 text-center">
-                            <p>Don't have an account? <a href="register.html" class="text-info m-l-5">Sign Up</a></p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
 
         <script src="~/Scripts/jquery-3.2.1.min.js"></script>
         <script src="~/Scripts/popper.min.js"></script>

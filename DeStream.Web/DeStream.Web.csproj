@@ -220,6 +220,7 @@
     <Compile Include="Helpers\LoggingHelper.cs" />
     <Compile Include="Helpers\SignalNotificators.cs" />
     <Compile Include="Models\LoginMoodel.cs" />
+    <Compile Include="Models\WidgetModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebApi\ApplicationApi\DonationsController.cs" />
     <Compile Include="WebApi\ApplicationApi\WalletController.cs" />

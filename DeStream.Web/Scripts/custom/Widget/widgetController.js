@@ -8,8 +8,11 @@ var WidgetApp;
             this.$timeout = $timeout;
             this.collectionService = collectionService;
             this.TargetDonationsPerScreenCount = 3;
-            this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+            this._authorized = false;
+            this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1).replace("#", "");
             this._hub = $.connection.hub.createHubProxy("donationhub");
+            this._authorized = $("body").data("authorized") == "True";
+            $scope.vm = this;
             $.connection.hub.start(function (res) {
                 _this._hub.invoke("subscribe", _this._id);
             });
@@ -24,7 +27,6 @@ var WidgetApp;
                 var p = document.getElementById('notificationSound');
                 p.play();
             });
-            //this.initLoadTargetsTimer(true);
             this.loadDonationTargets();
         }
         WidgetController.prototype.runCarousel = function (runImmediately) {
@@ -47,6 +49,34 @@ var WidgetApp;
             this.$timeout(function () {
                 var timeoutFadeIn = !immeditely ? 2000 : 0;
                 $('.targetItem').fadeIn(timeoutFadeIn).removeClass('hidden-target');
+            });
+        };
+        WidgetController.prototype.addDonate = function (donation) {
+            console.log(donation);
+            if (!this._authorized) {
+                $('#authModal').modal('show');
+                console.log('modal');
+            }
+            else {
+                this.widgetService.donate(donation.Token).then(function (res) {
+                }, function (err) {
+                });
+            }
+        };
+        WidgetController.prototype.authorize = function () {
+            var _this = this;
+            this.$scope.authorizationModel.AuthorizationLoading = true;
+            this.widgetService.authorize(this.$scope.authorizationModel.AuthData).then(function (res) {
+                _this.$scope.authorizationModel.AuthorizationLoading = false;
+                $('#authModal').modal('hide');
+                _this.$scope.authorizationModel = null;
+                _this._authorized = true;
+            }, function (err) {
+                _this.$scope.authorizationModel.AuthorizationLoading = false;
+                var msg = "Error happened.";
+                if (err != null && err.data.ErrorMessage)
+                    msg = err.data.ErrorMessage;
+                _this.$scope.authorizationModel.AuthError = msg;
             });
         };
         WidgetController.prototype.loadDonationTargets = function () {

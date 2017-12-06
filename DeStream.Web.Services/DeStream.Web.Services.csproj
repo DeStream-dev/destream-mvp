@@ -97,6 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\StringCipher.cs" />
     <Compile Include="Implementations\ApplicationServices\WalletService.cs" />
     <Compile Include="Implementations\UserTargetDonationsService.cs" />
     <Compile Include="IUserTargetDonationsService.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Models\UserInfo.cs" />
     <Compile Include="Models\UserProfile.cs" />
     <Compile Include="Models\UserTarget.cs" />
+    <Compile Include="Models\WidgetUserTargetDonation.cs" />
     <Compile Include="ModelWithId.cs" />
     <Compile Include="WebServicesModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

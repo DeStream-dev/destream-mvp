@@ -10,9 +10,9 @@ namespace DeStream.Web.Helpers
 {
     public static class WidgetSignalNotificator
     {
-        public static void DonationAdded(WidgetNotificationResult donationInfo, IHubContext hub)
+        public static void DonationAdded(WidgetNotificationResult donationInfo, string targetUserId, IHubContext hub)
         {
-            var group = hub.Clients.Group(donationInfo.UserId);
+            var group = hub.Clients.Group(targetUserId);
             group.donationAdded(donationInfo);
         }
     }

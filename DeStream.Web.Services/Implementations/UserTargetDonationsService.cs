@@ -7,6 +7,7 @@ using DeStream.WebApi.Models;
 using DeStream.WebApi.Models.Response;
 using DeStream.Web.Entities.Data.Services;
 using DeStream.Web.Services.Models.Result;
+using DeStream.Web.Services.Models;
 
 namespace DeStream.Web.Services.Implementations
 {
@@ -16,6 +17,9 @@ namespace DeStream.Web.Services.Implementations
         private readonly Lazy<IUserTargetDataService> _userTargetDataService;
         private readonly Lazy<IApplicationUserDataService> _applicationUserDataService;
         private readonly Lazy<IUserTargetDonationDataService> _userTargetDonationDataService;
+
+        private const string TargetDonationKey = "dstream";
+
         public UserTargetDonationsService(Lazy<IUnitOfWork> unitOfWork,
             Lazy<IUserTargetDataService> userTargetDataService,
             Lazy<IApplicationUserDataService> applicationUserDataService,
@@ -27,69 +31,78 @@ namespace DeStream.Web.Services.Implementations
             _userTargetDonationDataService = userTargetDonationDataService;
         }
 
-        public AddDonationResult AddDonation(string toUserName, string fromUserId, decimal total, string targetCode)
+        private AddDonationResult AddDonationForUserId(string userId, string fromUserId, decimal total, string targetCode, AddDonationResult addDonationResult = null)
         {
             const string CommonErrorMessage = "Please, check username or target code.";
-            var result = new AddDonationResult();
-            result.Status = Common.Enums.OperationResultType.Failed;
-            var userId = _applicationUserDataService.Value.Query().Where(x => x.UserName.ToLower() == toUserName.ToLower()).Select(x => x.Id).FirstOrDefault();
 
-            if (userId != null)
+            var result = addDonationResult ?? new AddDonationResult();
+            result.Status = Common.Enums.OperationResultType.Failed;
+            if (/*userId != fromUserId*/true)
             {
-                if (/*userId != fromUserId*/true)
+                var fromUserExists = _applicationUserDataService.Value.Query().Any(x => x.Id == fromUserId);
+                if (fromUserExists)
                 {
-                    var fromUserExists = _applicationUserDataService.Value.Query().Any(x => x.Id == fromUserId);
-                    if (fromUserExists)
+                    var target = _userTargetDataService.Value.Query().FirstOrDefault(x => x.ApplicationUserId == userId
+                      && x.Code == targetCode);
+                    if (target != null)
                     {
-                        var target = _userTargetDataService.Value.Query().FirstOrDefault(x => x.ApplicationUserId == userId
-                          && x.Code == targetCode);
-                        if (target != null)
+                        _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
                         {
-                            var currentUserTotal = _userTargetDonationDataService.Value.Query().Where(x => x.UserTarget.ApplicationUserId == userId).Sum(x => (decimal?)x.DonationTotal) ?? 0;
-                            _userTargetDonationDataService.Value.Create(new Entities.UserTargetDonation
+                            DonationFromUserId = fromUserId,
+                            DonationTotal = total,
+                            UserTargetId = target.Id
+                        });
+                        _unitOfWork.Value.SaveChanges();
+                        result.Status = Common.Enums.OperationResultType.Success;
+                        result.WidgetNotificationResult = new WidgetNotificationResult
+                        {
+                            Donation = total,
+                            Code = target.Code,
+                        };
+                        result.TargetUserId = target.ApplicationUserId;
+                        result.WalletNotificationResult = new WalletBalanceChangedResponse
+                        {
+                            LastOperation = new WalletOperation
                             {
-                                DonationFromUserId = fromUserId,
-                                DonationTotal = total,
-                                UserTargetId = target.Id
-                            });
-                            _unitOfWork.Value.SaveChanges();
-                            result.Status = Common.Enums.OperationResultType.Success;
-                            result.SignalRResult = new WidgetNotificationResult
-                            {
-                                Donation = total,
-                                Code = target.Code,
-                                UserId =fromUserId //target.ApplicationUserId
-                            };
-                            result.WalletSignalRResult = new WalletBalanceChangedResponse
-                            {
-                                LastOperation = new WalletOperation
-                                {
-                                    OperationType = WalletOperationType.Income,
-                                    Total = total
-                                },
-                                Total = currentUserTotal + total
-                            };
-                        }
+                                OperationType = WalletOperationType.Income,
+                                Total = total
+                            }
+                        };
                     }
                 }
-                else
-                {
-                    result.Errors.Add("You cannot donate to yourself.");
-                }
             }
+            else
+            {
+                result.Errors.Add("You cannot donate to yourself.");
+            }
+
             if (result.Status == Common.Enums.OperationResultType.Failed && !result.Errors.Any())
                 result.Errors.Add(CommonErrorMessage);
             return result;
         }
 
-        public ListResponse<UserTargetDonation> GetDonations(string userId)
+        public AddDonationResult AddDonation(string toUserName, string fromUserId, decimal total, string targetCode)
         {
-            var result = new ListResponse<UserTargetDonation>();
+            var userId = _applicationUserDataService.Value.Query().Where(x => x.UserName.ToLower() == toUserName.ToLower()).Select(x => x.Id).FirstOrDefault();
+            var result = new AddDonationResult();
+            if (userId == null)
+                result.Errors.Add("Check username/target code");
+            else
+            {
+                AddDonationForUserId(userId, fromUserId, total, targetCode, result);
+            }
+            return result;
+        }
+
+        public ListResponse<WidgetUserTargetDonation> GetDonations(string userId)
+        {
+            var result = new ListResponse<WidgetUserTargetDonation>();
+            const decimal AvailableDonationTotal = 100;
 
             var targets = _userTargetDataService.Value.Query().Where(x => x.ApplicationUserId == userId).ToList();
             foreach (var item in targets)
             {
-                var resTarget = new UserTargetDonation
+                var resTarget = new WidgetUserTargetDonation
                 {
                     DestinationTargetTotal = item.TargetRequiredTotal,
                     TargetName = item.Name,
@@ -105,10 +118,50 @@ namespace DeStream.Web.Services.Implementations
                     resTarget.ActualTotal = total;
                     resTarget.LastDonateTotal = lastDonate.DonationTotal;
                 }
+
+                resTarget.AvailableDonates.Add(new AvailableDonate { DonateTotal = AvailableDonationTotal, Token = GetEncryptedTargetDonationInfo(userId, resTarget.Code, AvailableDonationTotal) });
                 result.Items.Add(resTarget);
             }
 
             return result;
         }
+
+        public AddDonationResult AddDonationFromWidgetByToken(string token, string fromUser)
+        {
+            var decripted = DecryptDonationTokenString(token);
+            var result = AddDonationForUserId(decripted.TargetUserId, fromUser, decripted.DonationTotal, decripted.TargetCode);
+            return result;
+        }
+
+        private string GetEncryptedTargetDonationInfo(string userId, string targetCode, decimal donatinTotal)
+        {
+            string str = $"{userId}||{targetCode}||{donatinTotal}";
+            var result = Helpers.StringCipher.Encrypt(str, TargetDonationKey);
+            return result;
+        }
+
+        private AddDonationFromWidgetDecriptedModel DecryptDonationTokenString(string encrypted)
+        {
+            AddDonationFromWidgetDecriptedModel res = null;
+            var decryptedStr = Helpers.StringCipher.Decrypt(encrypted, TargetDonationKey);
+            var parts = decryptedStr.Split(new[] { "||" }, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length == 3)
+            {
+                res = new AddDonationFromWidgetDecriptedModel();
+                res.TargetUserId = parts[0];
+                res.TargetCode = parts[1];
+                res.DonationTotal = decimal.Parse(parts[2]);
+            }
+            return res;
+        }
     }
+
+
+    class AddDonationFromWidgetDecriptedModel
+    {
+        public string TargetUserId { get; set; }
+        public string TargetCode { get; set; }
+        public decimal DonationTotal { get; set; }
+    }
+
 }

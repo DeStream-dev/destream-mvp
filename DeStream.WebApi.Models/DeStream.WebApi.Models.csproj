@@ -48,7 +48,6 @@
     <Compile Include="Response\AuthorizeResponse.cs" />
     <Compile Include="Response\WalletBalanceChangedResponse.cs" />
     <Compile Include="Response\ErrorBase.cs" />
-    <Compile Include="Response\UserTargetDonation.cs" />
     <Compile Include="Response\WalletResponse.cs" />
   </ItemGroup>
   <ItemGroup />

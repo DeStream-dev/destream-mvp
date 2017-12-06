@@ -1,6 +1,9 @@
 ﻿module WidgetApp {
     export interface WidgetControllerScope {
         targetDonationInfos: UserTargetDonation[];
+        authorizationModel: WidgetAuthorizeModel;
+        
+        vm: WidgetController;
     }
 
     export class WidgetController {
@@ -9,15 +12,20 @@
         private _indexForNotification: number;
         private readonly TargetDonationsPerScreenCount: number = 3;
         private _newDonateArrivedToTargetCode: string;
+        private _authorized: boolean = false;
+
 
         constructor(private $scope: WidgetControllerScope, private widgetService: WidgetService,
             private $timeout: ng.ITimeoutService, private collectionService: App.Common.Services.CollectionService) {
-            this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+            this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1).replace("#","");
             this._hub = $.connection.hub.createHubProxy("donationhub");
+
+            this._authorized = $("body").data("authorized") == "True";
+            $scope.vm = this;
 
             $.connection.hub.start(res => {
                 this._hub.invoke("subscribe", this._id);
-
+                
             });
 
             $.connection.hub.disconnected(() => {
@@ -32,22 +40,9 @@
                 var p = <any>document.getElementById('notificationSound');
                 p.play();
             });
-            //this.initLoadTargetsTimer(true);
             this.loadDonationTargets();
         }
-
-        /*private _loadTargetsTimer: ng.IPromise<void>;
-        private initLoadTargetsTimer(immediateUpdate: boolean = false) {
-            var timeoutMs = 10000;
-            if (immediateUpdate) timeoutMs = 0;
-            this.$timeout.cancel(this._loadTargetsTimer);
-            this._loadTargetsTimer= this.$timeout(() => {
-                this.widgetService.getAll(this._id).then(res => {
-                    this.$scope.targetDonationInfos = res.data;
-                    this.initLoadTargetsTimer();
-                });
-            }, timeoutMs);
-        }*/
+        
 
         private _carouselTargetDonationsTimeout: ng.IPromise<void>;
         private _rowIndex: number;
@@ -74,6 +69,37 @@
                 var timeoutFadeIn = !immeditely? 2000:0;
                 
                 $('.targetItem').fadeIn(timeoutFadeIn).removeClass('hidden-target');
+            });
+        }
+
+        public addDonate(donation: AvailableDonate) {
+            console.log(donation);
+            if (!this._authorized) {
+                $('#authModal').modal('show');
+                console.log('modal');
+            }
+            else {
+                this.widgetService.donate(donation.Token).then(res => {
+                    
+                }, err => {
+
+                });
+            }
+        }
+
+        public authorize() {
+            this.$scope.authorizationModel.AuthorizationLoading = true;
+            this.widgetService.authorize(this.$scope.authorizationModel.AuthData).then(res => {
+                this.$scope.authorizationModel.AuthorizationLoading = false;
+                $('#authModal').modal('hide');
+                this.$scope.authorizationModel = null;
+                this._authorized = true;
+            },err => {
+                this.$scope.authorizationModel.AuthorizationLoading = false;
+                var msg = "Error happened.";
+                if (err != null && err.data.ErrorMessage)
+                    msg = err.data.ErrorMessage;
+                this.$scope.authorizationModel.AuthError = msg;
             });
         }
 
