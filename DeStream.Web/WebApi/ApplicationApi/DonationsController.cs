@@ -26,7 +26,8 @@ namespace DeStream.Web.WebApi.ApplicationApi
                     if (result.WidgetNotificationResult != null)
                     {
                         Helpers.WidgetSignalNotificator.DonationAdded(result.WidgetNotificationResult, result.TargetUserId, Hub);
-                        Helpers.WalletSignalNotificator.WalletBalanceChanged(result.TargetUserId, result.WalletNotificationResult, Hub);
+                        Helpers.WalletSignalNotificator.WalletBalanceChanged(result.TargetUserId, result.WalletDestintaionUserNotificationResult, Hub);
+                        Helpers.WalletSignalNotificator.WalletBalanceChanged(donation.FromUser, result.WalletSenderUserNotificationResult, Hub);
                     }
                     return Ok();
                 }

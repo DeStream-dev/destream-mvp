@@ -52,7 +52,7 @@ namespace DeStream.Web.WebApi.WidgetApi
                     if (authResult != null)
                     {
                         HttpContext.Current.GetOwinContext().Authentication.SignIn(new Microsoft.Owin.Security.AuthenticationProperties { IsPersistent = true }, authResult);
-                        return Ok();
+                        return Ok(authResult.GetUserId().Replace("-",""));
                     }
                 }
             }
@@ -70,8 +70,8 @@ namespace DeStream.Web.WebApi.WidgetApi
                 if(res.Status==Common.Enums.OperationResultType.Success && res.WidgetNotificationResult!=null)
                 {
                     WidgetSignalNotificator.DonationAdded(res.WidgetNotificationResult, res.TargetUserId, Hub);
-                    WalletSignalNotificator.WalletBalanceChanged(curUserId, res.WalletNotificationResult, Hub);
-                    //todo добавить изменение баланса для отправителя
+                    WalletSignalNotificator.WalletBalanceChanged(res.TargetUserId, res.WalletDestintaionUserNotificationResult, Hub);
+                    WalletSignalNotificator.WalletBalanceChanged(curUserId, res.WalletSenderUserNotificationResult, Hub);
                 }
                         
             }

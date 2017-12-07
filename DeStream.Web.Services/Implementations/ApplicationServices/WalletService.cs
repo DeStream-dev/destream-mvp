@@ -46,7 +46,7 @@ namespace DeStream.Web.Services.Implementations.ApplicationServices
                 {
                     wallet = new WalletResponse();
                     var incomeTotal = _userTargetDonationDataService.Value.Query().Where(x => x.UserTarget.ApplicationUserId == userId).Sum(x =>(decimal?) x.DonationTotal)??0;
-                    var outcome = 0;
+                    var outcome = _userTargetDonationDataService.Value.Query().Where(x=>x.DonationFromUserId==userId).Sum(x=>(decimal?) x.DonationTotal)??0;
                     if (incomeTotal >= outcome)
                         wallet.Total = incomeTotal - outcome;
                 }

@@ -37,7 +37,7 @@ namespace DeStream.Web.Services.Implementations
 
             var result = addDonationResult ?? new AddDonationResult();
             result.Status = Common.Enums.OperationResultType.Failed;
-            if (/*userId != fromUserId*/true)
+            if (userId != fromUserId)
             {
                 var fromUserExists = _applicationUserDataService.Value.Query().Any(x => x.Id == fromUserId);
                 if (fromUserExists)
@@ -60,14 +60,8 @@ namespace DeStream.Web.Services.Implementations
                             Code = target.Code,
                         };
                         result.TargetUserId = target.ApplicationUserId;
-                        result.WalletNotificationResult = new WalletBalanceChangedResponse
-                        {
-                            LastOperation = new WalletOperation
-                            {
-                                OperationType = WalletOperationType.Income,
-                                Total = total
-                            }
-                        };
+                        result.WalletDestintaionUserNotificationResult = new WalletBalanceChangedResponse(total, WalletOperationType.Income);
+                        result.WalletSenderUserNotificationResult = new WalletBalanceChangedResponse(total, WalletOperationType.Outcome);
                     }
                 }
             }

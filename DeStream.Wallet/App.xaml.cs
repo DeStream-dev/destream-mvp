@@ -1,4 +1,6 @@
 ﻿using DeStream.Wallet.Models;
+using NLog;
+using NLog.Layouts;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,6 +21,7 @@ namespace DeStream.Wallet
     /// </summary>
     public partial class App : Application
     {
+        private readonly Logger Log = LogManager.GetCurrentClassLogger();
 
         private const string AppName = "DeStreamWallet";
         private const string ConfigFile = "config.json";
@@ -26,6 +29,7 @@ namespace DeStream.Wallet
 
         protected override void OnStartup(StartupEventArgs e)
         {
+
             var curProcessName = Process.GetCurrentProcess().ProcessName;
             if (Process.GetProcesses().Count(x => x.ProcessName == curProcessName) > 1)
             {
@@ -34,7 +38,13 @@ namespace DeStream.Wallet
 #if (DEBUG)
             ProjectConfigFileName = "config.Debug.json";
 #else
-            ProjectConfigFileName = "config.Release.json";
+            {
+                if(LogManager.Configuration.Variables.ContainsKey("basedir"))
+                {
+                    LogManager.Configuration.Variables["basedir"] = GetUserAppFolderPath();
+                }
+                ProjectConfigFileName = "config.Release.json";
+            }
 #endif
 
             string configPath = Path.Combine(Environment.CurrentDirectory, ConfigFile);
@@ -54,10 +64,16 @@ namespace DeStream.Wallet
             base.OnStartup(e);
         }
 
-        private string ProceedConfig()
+        private string GetUserAppFolderPath()
         {
             var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             var appFolder = Path.Combine(path, AppName);
+            return appFolder;
+        }
+
+        private string ProceedConfig()
+        {
+            var appFolder = GetUserAppFolderPath();
             string configPath = Path.Combine(appFolder, ConfigFile);
             if (!Directory.Exists(appFolder))
             {

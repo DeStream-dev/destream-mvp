@@ -7,6 +7,19 @@
         mc:Ignorable="d"
         Title="DeStream Wallet - Log In" Height="190" Width="315" WindowStartupLocation="CenterScreen" StateChanged="Window_StateChanged" ResizeMode="CanMinimize"
         DataContext="{Binding Source={StaticResource VMLocator}, Path=LoginVM}" Icon="Images/wallet_trayIcon.ico">
+    <Window.Style>
+        <Style TargetType="Window">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding InWork}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding InWork}" Value="False">
+                    <Setter Property="IsEnabled" Value="True"/>
+                </DataTrigger>
+            </Style.Triggers>
+            
+        </Style>
+    </Window.Style>
     <Window.InputBindings>
         <KeyBinding Key="Return" Command="{Binding EnterCommand}"/>
     </Window.InputBindings>

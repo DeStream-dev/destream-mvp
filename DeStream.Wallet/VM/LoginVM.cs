@@ -60,6 +60,19 @@ namespace DeStream.Wallet.VM
             }
         }
 
+        private bool _inWork;
+        public bool InWork
+        {
+            get
+            {
+                return _inWork;
+            }
+            set
+            {
+                Set(() => InWork, ref _inWork, value);
+            }
+        }
+
         public RelayCommand EnterCommand { get; private set; }
 
         public LoginVM(IWindowService ws)
@@ -74,6 +87,7 @@ namespace DeStream.Wallet.VM
 
         private void EnterCommand_Handler()
         {
+            InWork = true;
             LoginError = string.Empty;
             var req = new RestRequest(Constants.WalletWebApi, Method.POST);
             req.AddObject(new AuthorizeRequest { Username = Username, Password = Password });
@@ -113,10 +127,13 @@ namespace DeStream.Wallet.VM
                 {
                     LoginError = "Error happened.";
                 }
+                InWork = false;
             }, Scheduler);
 
 
         }
+
+
 
         private bool CanEnterCommand_Handler()
         {

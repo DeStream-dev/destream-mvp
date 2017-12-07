@@ -11,7 +11,8 @@ namespace DeStream.Web.Services.Models.Result
     public class AddDonationResult
     {
         public WidgetNotificationResult WidgetNotificationResult { get; set; }
-        public WalletBalanceChangedResponse WalletNotificationResult { get; set; }
+        public WalletBalanceChangedResponse WalletDestintaionUserNotificationResult { get; set; }
+        public WalletBalanceChangedResponse WalletSenderUserNotificationResult { get; set; }
         public OperationResultType Status { get; set; }
         public string TargetUserId { get; set; }
         public List<string> Errors { get; set; } = new List<string>();

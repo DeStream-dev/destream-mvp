@@ -8,10 +8,10 @@ var WidgetApp;
             this.$timeout = $timeout;
             this.collectionService = collectionService;
             this.TargetDonationsPerScreenCount = 3;
-            this._authorized = false;
             this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1).replace("#", "");
             this._hub = $.connection.hub.createHubProxy("donationhub");
-            this._authorized = $("body").data("authorized") == "True";
+            this._curUserId = $("body").data("curuserid");
+            this.$scope.canSendDonation = this._id != this._curUserId;
             $scope.vm = this;
             $.connection.hub.start(function (res) {
                 _this._hub.invoke("subscribe", _this._id);
@@ -53,7 +53,7 @@ var WidgetApp;
         };
         WidgetController.prototype.addDonate = function (donation) {
             console.log(donation);
-            if (!this._authorized) {
+            if (!this._curUserId) {
                 $('#authModal').modal('show');
                 console.log('modal');
             }
@@ -70,7 +70,8 @@ var WidgetApp;
                 _this.$scope.authorizationModel.AuthorizationLoading = false;
                 $('#authModal').modal('hide');
                 _this.$scope.authorizationModel = null;
-                _this._authorized = true;
+                _this._curUserId = res.data;
+                _this.$scope.canSendDonation = _this._curUserId != _this._id;
             }, function (err) {
                 _this.$scope.authorizationModel.AuthorizationLoading = false;
                 var msg = "Error happened.";
@@ -92,7 +93,7 @@ var WidgetApp;
                     if (index > -1) {
                         var rowIndex = 0;
                         if (index + 1 > _this.TargetDonationsPerScreenCount) {
-                            rowIndex = Math.round(index / _this.TargetDonationsPerScreenCount);
+                            rowIndex = Math.floor(index / _this.TargetDonationsPerScreenCount);
                             indexToNotificate = _this._rows[rowIndex].indexOf(_this._rows[rowIndex].filter(function (x) { return x.Code == _this._newDonateArrivedToTargetCode; })[0]);
                             _this._rowIndex = rowIndex;
                         }

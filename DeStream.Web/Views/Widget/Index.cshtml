@@ -1,7 +1,9 @@
-﻿
+﻿@using Microsoft.AspNet.Identity
+
 @model DeStream.Web.Services.Models.UserInfo
 @{
     Layout = null;
+    var userId = Request.IsAuthenticated ? User.Identity.GetUserId().Replace("-", "") : null;
 }
 
 <!DOCTYPE html>
@@ -18,7 +20,7 @@
     <link href="~/Content/css/ionicons.min.css" rel="stylesheet" />
     <link href="~/Content/css/master_style.css" rel="stylesheet" />
     <link href="~/Content/css/_all-skins.css" rel="stylesheet" />
-    <link href="~/Content/css/Site.css" rel="stylesheet" />
+    <link href="~/Content/css/Site.css?id=0" rel="stylesheet" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -89,17 +91,24 @@
         .login-box {
             width: 400px;
         }
+
+        .donateBtn[disabled] {
+            opacity: 0.4;
+        }
     </style>
 </head>
 @if (Model != null)
 {
-    <body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;" data-authorized="@Request.IsAuthenticated">
+    <body class="skin-blue sidebar-collapse sidebar-mini" style="height: auto; min-height: 100%;" data-curUserId="@userId">
         <div class="wrapper">
             <audio id="notificationSound" src="~/Content/sounds/coins.mp3"></audio>
             <div class="content-wrapper" style="min-height: 922px;" ng-app="WidgetApp" ng-controller="WidgetController">
                 <div class="text-center" style="color:black">
                     <h1>
-                        @Model.UserProfile.DisplayName
+                        @if (Model.UserProfile != null)
+                        {
+                            @Model.UserProfile.DisplayName;
+}
                     </h1>
                 </div>
                 <section class="content">
@@ -110,7 +119,8 @@
                                     <h3>{{item.TargetName}}</h3>
                                     <p># {{item.Code}}</p>
                                     <p>{{item.ActualTotal}}/{{item.DestinationTargetTotal}}</p>
-                                    <a href="" ng-repeat="donateItem in item.AvailableDonates" class="btn bg-purple btn-flat margin" ng-click="vm.addDonate(donateItem)" style="font-size:1.4em;width:98%">Donate {{donateItem.DonateTotal}}</a>
+                                    <a href="" ng-repeat="donateItem in item.AvailableDonates" class="btn bg-purple btn-flat margin donateBtn" ng-click="vm.addDonate(donateItem)"
+                                       style="font-size:1.4em;width:98%" ng-disabled="!canSendDonation">Donate {{donateItem.DonateTotal}}</a>
                                 </div>
                                 <div class="donate">+{{item.LastDonateTotal}}</div>
                             </div>

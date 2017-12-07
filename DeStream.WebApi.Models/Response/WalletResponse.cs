@@ -23,6 +23,11 @@ namespace DeStream.WebApi.Models.Response
     {
         public decimal Total { get; set; }
         public WalletOperationType OperationType { get; set; }
+        public WalletOperation(decimal operationTotal, WalletOperationType operationType)
+        {
+            Total = operationTotal;
+            OperationType = operationType;
+        }
     }
 
 }

@@ -6,15 +6,31 @@
         xmlns:local="clr-namespace:DeStream.Wallet"
         mc:Ignorable="d"
         Title="DeStream Wallet - Send" Height="290" Width="310" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" 
-        Closed="Window_Closed" DataContext="{Binding Source={StaticResource VMLocator}, Path=WalletWM}" IsEnabled="{Binding AllowUserInteraction}" Icon="Images/wallet_trayIcon.ico" StateChanged="Window_StateChanged">
+        Closed="Window_Closed" DataContext="{Binding Source={StaticResource VMLocator}, Path=WalletWM}"
+        IsEnabled="{Binding AllowUserInteraction}" Icon="Images/wallet_trayIcon.ico" StateChanged="Window_StateChanged">
     <Window.Resources>
         <Storyboard x:Key="operationStatusStoryboard">
             <DoubleAnimation Storyboard.TargetName="lastOperationTextBox" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:4" AutoReverse="True"/>
         </Storyboard>
+        <Storyboard x:Key="123">
+            <ObjectAnimationUsingKeyFrames
+          Storyboard.TargetProperty="Background"
+          Duration="0:0:4" RepeatBehavior="Forever" Storyboard.TargetName="WalletBorder">
+                <ObjectAnimationUsingKeyFrames.KeyFrames>
+                    <DiscreteObjectKeyFrame KeyTime="0:0:4">
+                        <DiscreteObjectKeyFrame.Value>
+                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                                <GradientStop Color="White" Offset="0"/>
+                                <GradientStop Color="#FFC38E8E" Offset="1"/>
+                            </LinearGradientBrush>
+                        </DiscreteObjectKeyFrame.Value>
+                    </DiscreteObjectKeyFrame>
+                </ObjectAnimationUsingKeyFrames.KeyFrames>
+            </ObjectAnimationUsingKeyFrames>
+        </Storyboard>
     </Window.Resources>
     <Grid>
-        <Border Style="{StaticResource RoundedBorderStyle}">
-
+        <Border Style="{StaticResource RoundedBorderStyle}" x:Name="WalletBorder">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -68,7 +84,7 @@
                 <StatusBar Grid.Row="4" Grid.ColumnSpan="2" Foreground="Gray">
                     <StatusBarItem>
                         <TextBlock Text="{Binding Source={StaticResource AppContext},
-                            Path=CurrentUser.Username,StringFormat={}Logged user:{0}}"/>
+                            Path=CurrentUser.Username,StringFormat={}Logged user: {0}}"/>
                     </StatusBarItem>
 
                     <StatusBarItem HorizontalAlignment="Right">

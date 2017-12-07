@@ -9,5 +9,9 @@ namespace DeStream.WebApi.Models.Response
     public class WalletBalanceChangedResponse
     {
         public WalletOperation LastOperation { get; set; }
+        public WalletBalanceChangedResponse(decimal operationTotal, WalletOperationType operationType)
+        {
+            LastOperation = new WalletOperation(operationTotal, operationType);
+        }
     }
 }

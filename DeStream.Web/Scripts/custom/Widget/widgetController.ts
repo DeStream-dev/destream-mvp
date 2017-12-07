@@ -4,6 +4,7 @@
         authorizationModel: WidgetAuthorizeModel;
         
         vm: WidgetController;
+        canSendDonation: boolean;
     }
 
     export class WidgetController {
@@ -12,15 +13,15 @@
         private _indexForNotification: number;
         private readonly TargetDonationsPerScreenCount: number = 3;
         private _newDonateArrivedToTargetCode: string;
-        private _authorized: boolean = false;
-
+        private _curUserId: string;
 
         constructor(private $scope: WidgetControllerScope, private widgetService: WidgetService,
             private $timeout: ng.ITimeoutService, private collectionService: App.Common.Services.CollectionService) {
             this._id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1).replace("#","");
             this._hub = $.connection.hub.createHubProxy("donationhub");
 
-            this._authorized = $("body").data("authorized") == "True";
+            this._curUserId = $("body").data("curuserid");
+            this.$scope.canSendDonation = this._id != this._curUserId;
             $scope.vm = this;
 
             $.connection.hub.start(res => {
@@ -74,7 +75,7 @@
 
         public addDonate(donation: AvailableDonate) {
             console.log(donation);
-            if (!this._authorized) {
+            if (!this._curUserId) {
                 $('#authModal').modal('show');
                 console.log('modal');
             }
@@ -93,7 +94,8 @@
                 this.$scope.authorizationModel.AuthorizationLoading = false;
                 $('#authModal').modal('hide');
                 this.$scope.authorizationModel = null;
-                this._authorized = true;
+                this._curUserId = res.data;
+                this.$scope.canSendDonation = this._curUserId != this._id;
             },err => {
                 this.$scope.authorizationModel.AuthorizationLoading = false;
                 var msg = "Error happened.";
@@ -115,7 +117,7 @@
                     if (index > -1) {
                         var rowIndex = 0;
                         if (index + 1 > this.TargetDonationsPerScreenCount) {
-                            rowIndex = Math.round(index / this.TargetDonationsPerScreenCount);
+                            rowIndex = Math.floor(index / this.TargetDonationsPerScreenCount);
                             indexToNotificate = this._rows[rowIndex].indexOf(this._rows[rowIndex].filter(x => x.Code == this._newDonateArrivedToTargetCode)[0]);
                             this._rowIndex = rowIndex;
                         }

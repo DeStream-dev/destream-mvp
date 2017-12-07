@@ -1,5 +1,6 @@
 ﻿using DeStream.Wallet.Helpers;
 using DeStream.Wallet.Models;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,7 @@ namespace DeStream.Wallet
                 }
 
                 Show();
+                Activate();
             });
         }
 
@@ -66,6 +68,8 @@ namespace DeStream.Wallet
 
         private void Window_Closed(object sender, EventArgs e)
         {
+            var vm= DataContext as ViewModelBase;
+            vm.Cleanup();
             System.Windows.Application.Current.MainWindow.Show();
         }
 
@@ -110,5 +114,6 @@ namespace DeStream.Wallet
             else
                 _notifyIcon.Visible = false;
         }
+        
     }
 }

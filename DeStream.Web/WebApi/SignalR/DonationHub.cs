@@ -9,16 +9,23 @@ namespace DeStream.Web.WebApi.SignalR
 {
     public class DonationHub:Hub
     {
+        private static readonly NLog.Logger Log = NLog.LogManager.GetCurrentClassLogger();
         public void Subscribe(string userId)
         {
-            NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-            log.Info(userId);
+            Log.Info("Connect");
+
             Guid uid = Guid.Empty;
             if (Guid.TryParse(userId, out uid))
             {
                 Groups.Add(Context.ConnectionId, uid.ToString());
             }
         }
-        
+
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            Log.Info("Disconnect");
+            return base.OnDisconnected(stopCalled);
+        }
+
     }
 }
